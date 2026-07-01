@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Health Self-Check Kiosk</title>
+    
+    <style>
+        :root {
+    
+    --primary: #0a5c36; 
+    --primary-hover: #074729;
+    --accent: #d4af37; 
+    --background: #eef2f5;
+    --surface: #ffffff;
+    --text-main: #2c3e50;
+    --text-muted: #7f8c8d;
+    --danger: #e74c3c;
+    --border: #d1d8e0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 50px 20px;
+    background-image: radial-gradient(circle at top right, #e3ebe8 0%, var(--background) 100%);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 3rem;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+header h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+header p {
+    color: var(--text-muted);
+    font-size: 1.15rem;
+    font-weight: 500;
+}
+
+main {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 950px;
+}
+
+.card {
+    background: var(--surface);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.06), 0 5px 15px rgba(0,0,0,0.03);
+    width: 100%;
+    max-width: 450px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-top: 5px solid var(--primary);
+}
+
+.card:hover {
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 22px;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+
+input, select {
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 1.05rem;
+    background-color: #fafbfc;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(10, 92, 54, 0.1);
+}
+
+.error-border {
+    border-color: var(--danger) !important;
+    background-color: #fdf2f1 !important;
+}
+
+button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-top: 15px;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(10, 92, 54, 0.2);
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(10, 92, 54, 0.3);
+}
+
+button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(10, 92, 54, 0.2);
+}
+
+button:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Enhanced Result Card */
+#resultCard {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+    min-height: 350px;
+    border-top: none; /* Override default card border */
+    animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#bmiValue {
+    font-size: 4.5rem;
+    font-weight: 900;
+    margin-bottom: 10px;
+    text-shadow: 2px 4px 8px rgba(0,0,0,0.25);
+}
+
+#bmiCategory {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+#bmiMessage {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(5px);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+    font-weight: 500;
+}
+
+.footer-note {
+    margin-top: 4rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    main {
+        flex-direction: column;
+        align-items: center;
+    }
+    .card {
+        max-width: 100%;
+        padding: 30px 20px;
+    }
+    header h1 {
+        font-size: 2.2rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Health Check Kiosk</h1>
+        <p>Self-service BMI calculation and wellness logging system.</p>
+    </header>
+
+    <main>
+        <section class="card form-section">
+            <form id="bmiForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="Juan Dela Cruz">
+                </div>
+                
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" min="1" max="120" placeholder="e.g., 20">
+                </div>
+
+                <div class="form-group">
+                    <label for="sex">Sex</label>
+                    <select id="sex">
+                        <option value="">Select your biological sex...</option>
+                        <option value="Female">Female</option>
+                        <option value="Male">Male</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="weight">Weight (kg)</label>
+                    <input type="number" id="weight" min="1" step="0.1" placeholder="e.g., 65.5">
+                </div>
+
+                <div class="form-group">
+                    <label for="height">Height (cm)</label>
+                    <input type="number" id="height" min="1" step="0.1" placeholder="e.g., 170">
+                </div>
+
+                <button type="submit" id="submitBtn">Calculate & Record BMI</button>
+            </form>
+        </section>
+
+        <section id="resultCard" class="card hidden">
+            <h2 id="bmiValue">--</h2>
+            <h3 id="bmiCategory">Category</h3>
+            <p id="bmiMessage">Recommendation message will appear here.</p>
+        </section>
+    </main>
+
+    <div class="footer-note">
+        Damaso Laboratory 5 Activity
+    </div>
+
+    <script>
+        document.getElementById('bmiForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // 1. LOOP REQUIREMENT: Validate multiple fields efficiently
+            const requiredFieldIds = ['name', 'age', 'sex', 'weight', 'height'];
+            let allFieldsValid = true;
+
+            requiredFieldIds.forEach(id => {
+                const inputElement = document.getElementById(id);
+                if (inputElement.value.trim() === '') {
+                    inputElement.classList.add('error-border');
+                    allFieldsValid = false;
+                } else {
+                    inputElement.classList.remove('error-border');
+                }
+            });
+
+            // 2. IF-ELSE REQUIREMENT: Control logic flow based on validation
+            if (!allFieldsValid) {
+                alert('Please complete all highlighted fields before proceeding.');
+                return; 
+            } else {
+                processBMI(); 
+            }
+        });
+
+        function processBMI() {
+            
+            const name = document.getElementById('name').value.trim();
+            const age = parseInt(document.getElementById('age').value);
+            const sex = document.getElementById('sex').value;
+            const weight = parseFloat(document.getElementById('weight').value);
+            const heightCm = parseFloat(document.getElementById('height').value);
+
+            // Secondary logic check
+            if (weight <= 0 || heightCm <= 0) {
+                alert('Physical measurements must be greater than zero.');
+                return;
+            }
+
+            
+            const heightM = heightCm / 100;
+            const bmi = +(weight / (heightM * heightM)).toFixed(1);
+
+            let category, message, color;
+
+            // 3. SWITCH-CASE REQUIREMENT: Map BMI results to UI outputs
+            switch (true) {
+                case bmi < 18.5:
+                    category = 'Underweight';
+                    color = '#3498db'; 
+                    message = 'You are currently underweight. Consider consulting a nutritionist for a calorie-sufficient diet plan.';
+                    break;
+                case bmi < 25:
+                    category = 'Normal';
+                    color = '#2ecc71'; 
+                    message = 'Excellent work! Your BMI is in the healthy range. Keep up your current healthy habits.';
+                    break;
+                case bmi < 30:
+                    category = 'Overweight';
+                    color = '#f39c12'; 
+                    message = 'You are in the overweight range. Consider incorporating more physical activity into your daily routine.';
+                    break;
+                default:
+                    category = 'Obese';
+                    color = '#e74c3c'; 
+                    message = 'Your BMI indicates obesity. We highly recommend consulting a healthcare provider for personalized advice.';
+            }
+
+            // Update DOM UI
+            const resultCard = document.getElementById('resultCard');
+            resultCard.classList.remove('hidden');
+            resultCard.style.backgroundColor = color;
+            document.getElementById('bmiValue').textContent = bmi;
+            document.getElementById('bmiCategory').textContent = category;
+            document.getElementById('bmiMessage').textContent = message;
+
+            
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.textContent;
+            btn.textContent = "Recording...";
+            btn.disabled = true;
+
+            
+            recordSubmission({ name, age, sex, weight, heightCm, bmi, category }, btn, originalText);
+        }
+
+       function recordSubmission(record, btn, originalText) {
+            
+            const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxmyjX9Gkn_7fgDi92HWleeRVJdecGFg5S77OmyYSMBK49Oc7aulRFQM3d1lhQTxFny/exec'; 
+
+            
+            const urlEncodedData = new URLSearchParams(record).toString();
+
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: {
+                    
+                    'Content-Type': 'application/x-www-form-urlencoded', 
+                },
+                body: urlEncodedData 
+            })
+            .then(response => response.text()) 
+            .then(text => {
+                console.log('Server response:', text);
+                if(text.trim() === 'Success') {
+                    alert('Record securely synced to Google Sheets.');
+                } else {
+                    alert('Submitted, but server returned: ' + text);
+                }
+            })
+            .catch(err => {
+                console.error('Network Error during sync:', err);
+                alert('There was a network error. Please check the console.');
+            })
+            .finally(() => {
+                
+                btn.textContent = originalText;
+                btn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
